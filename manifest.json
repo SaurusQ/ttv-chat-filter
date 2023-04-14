@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "TWILTER",
+  "description": "Enhance the performance of twitch",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/chat_filter.js"],
+      "matches": [
+        "https://www.twitch.tv/vedal987"
+      ]
+    }
+  ]
+}
