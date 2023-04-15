@@ -6,13 +6,46 @@ const chatObserverOptions = {
   subtree: true
 };
 
-function filterMsg(msg) {
+const countWords = (str) => {
+  const words = str.toLowerCase().split(" ");
+  const wordCounts = {};
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    if (wordCounts[word]) {
+      wordCounts[word]++;
+    } else {
+      wordCounts[word] = 1;
+    }
+  }
+  // Return the word counts object
+  return wordCounts;
+}
+
+const calculateStats = (wordCounts) => {
+  const counts = Object.values(wordCounts);
+  const mean = counts.reduce((acc, val) => acc + val, 0) / counts.length;
+  const std = Math.sqrt(
+    counts.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / counts.length
+  );
+  return { mean, std };
+}
+
+const filterMsg = (msg) => {
   /*if(msg.length <= 4) return true
   msg = msg.toLowerCase()
   filterList = ["monkaw", "noted", "kekw", "kekwa", "based", "huh", "aware", "flushed", "gigachad", "nice", "ok", "corpa"]
   return filterList.includes(msg)*/
+  
   const regex = /^\s*\S+(\s+\S+)?\s*[\S]?$/
-  return regex.test(msg)
+  if (regex.test(msg)) return true
+
+  const { mean, std } = calculateStats(countWords(msg))
+
+  if(std < 1 && mean >= 3 ) {
+    return true
+  }
+
+  return false
 }
 
 const chatCallback = (mutationsList) => {
