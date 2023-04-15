@@ -11,8 +11,9 @@
     {
       "js": ["scripts/chat_filter.js"],
       "matches": [
-        "https://www.twitch.tv/vedal987"
+        "https://www.twitch.tv/*"
       ]
     }
-  ]
+  ],
+  "permissions": ["storage", "nativeMessaging", "activeTab"]
 }
