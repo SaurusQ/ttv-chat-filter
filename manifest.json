@@ -9,7 +9,7 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/chat_filter.js"],
+      "js": ["scripts/chat_filter.js", "scripts/auto_claim.js"],
       "matches": [
         "https://www.twitch.tv/*"
       ]
