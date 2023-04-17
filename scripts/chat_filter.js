@@ -4,21 +4,21 @@ var chatElement
 const chatObserverOptions = {
   childList: true,
   subtree: true
-};
+}
 
 const countWords = (str) => {
-  const words = str.toLowerCase().split(" ");
-  const wordCounts = {};
+  const words = str.toLowerCase().split(" ")
+  const wordCounts = {}
   for (let i = 0; i < words.length; i++) {
-    const word = words[i];
+    const word = words[i]
     if (wordCounts[word]) {
-      wordCounts[word]++;
+      wordCounts[word]++
     } else {
-      wordCounts[word] = 1;
+      wordCounts[word] = 1
     }
   }
   // Return the word counts object
-  return wordCounts;
+  return wordCounts
 }
 
 const calculateStats = (wordCounts) => {
@@ -40,10 +40,8 @@ const filterMsg = (msg) => {
   if (regex.test(msg)) return true
 
   const { mean, std } = calculateStats(countWords(msg))
-
-  if(std < 1 && mean >= 3 ) {
-    return true
-  }
+  if( mean >= 3 ) return true
+  //console.log(mean, std, "#" msg)
 
   return false
 }
@@ -58,18 +56,28 @@ const chatCallback = (mutationsList) => {
           break
         }
         const messageSpan = addedNode.querySelector('span[data-a-target="chat-message-text"]');
-        if (messageSpan && filterMsg(messageSpan.textContent)) {
-          console.log("Removed: " + messageSpan.textContent)
-          addedNode.style.display = 'none';
-          //chatInputDiv.appendChild(addedNode)
+        if (messageSpan) {
+          const username = addedNode.querySelector('span[class="chat-author__display-name"]').textContent
+          const msg = messageSpan.textContent
+          //console.log("username", username)
+          const verifiedElem = addedNode.querySelector('img[alt="Verified"]')
+          if (verifiedElem) {
+            console.log("Found verified user: " +  username + " : " +  msg)
+            addedNode.style.backgroundColor = "red"
+          }
+          else if (enabled && filterMsg(messageSpan.textContent)) {
+            console.log("Removed: " + username + ": " +  msg)
+            addedNode.style.display = 'none';
+            //chatInputDiv.appendChild(addedNode)
+          }
         }
       }
     }
   }
 }
 
-var enabled = true
-chrome.storage.sync.get({ enableFilter: true }, (items) => {
+var enabled = false
+chrome.storage.sync.get({ enableFilter: false }, (items) => {
   enabled = items.enableFilter
   console.log("enable start: " + enabled)
 });
@@ -77,17 +85,6 @@ chrome.storage.sync.get({ enableFilter: true }, (items) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'enableFilter') {
     enabled = request.value;
-    if (chatObserver)
-    {
-      if (enabled) {
-        if (chatObserver.takeRecords().length === 0 && chatObserver && chatElement) {
-          chatObserver.observe(chatElement, chatObserverOptions)
-        }
-      }
-      else {
-        chatObserver.disconnect()
-      }
-    }
     console.log('Filter ' + (enabled ? 'enabled' : 'disabled'));
   }
 });
@@ -120,7 +117,6 @@ window.addEventListener("load", () => {
 
   chatElement = document.querySelector('div[data-test-selector="chat-scrollable-area__message-container"]')
   chatObserver = new MutationObserver(chatCallback)
-  if (enabled) {
-    chatObserver.observe(chatElement, chatObserverOptions)
-  }
+
+  chatObserver.observe(chatElement, chatObserverOptions)
 })

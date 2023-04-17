@@ -16,6 +16,10 @@ window.addEventListener("load", () => {
   }
   const claimBase = document.querySelector('div[data-test-selector="chat-input-buttons-container"]')
   const claimObserver = new MutationObserver(claimCallback)
+  if (!claimBase) {
+    console.log("Cannot start auto claim!")
+    return
+  }
   claimObserver.observe(claimBase, claimObserverOptions)
   console.log("autoclaim enabled")
 })
