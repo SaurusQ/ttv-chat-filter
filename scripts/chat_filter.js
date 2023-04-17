@@ -61,7 +61,7 @@ const chatCallback = (mutationsList) => {
           const msg = messageSpan.textContent
           //console.log("username", username)
           const verifiedElem = addedNode.querySelector('img[alt="Verified"]')
-          if (verifiedElem) {
+          if (verifiedElem && !username.endsWith("bot")) {
             console.log("Found verified user: " +  username + " : " +  msg)
             addedNode.style.backgroundColor = "red"
           }
